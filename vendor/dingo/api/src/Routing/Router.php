@@ -312,8 +312,8 @@ class Router
      */
     public function resource($name, $controller, array $options = [])
     {
-        if ($this->container->bound('Dingo\Api\Routing\ResourceRegistrar')) {
-            $registrar = $this->container->make('Dingo\Api\Routing\ResourceRegistrar');
+        if ($this->container->bound(ResourceRegistrar::class)) {
+            $registrar = $this->container->make(ResourceRegistrar::class);
         } else {
             $registrar = new ResourceRegistrar($this);
         }
@@ -358,7 +358,7 @@ class Router
     /**
      * Add the controller preparation middleware to the beginning of the routes middleware.
      *
-     * @param array @action
+     * @param array $action
      *
      * @return array
      */
@@ -505,7 +505,7 @@ class Router
     {
         $this->currentRoute = null;
 
-        $this->container->instance('Dingo\Api\Http\Request', $request);
+        $this->container->instance(Request::class, $request);
 
         $this->routesDispatched++;
 

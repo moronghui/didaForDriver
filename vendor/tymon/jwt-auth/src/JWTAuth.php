@@ -72,7 +72,6 @@ class JWTAuth
     public function toUser($token = false)
     {
         $payload = $this->getPayload($token);
-
         if (! $user = $this->user->getBy($this->identifier, $payload['sub'])) {
             return false;
         }
