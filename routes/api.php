@@ -26,4 +26,11 @@ $api->version('v1', function ($api) {
              $api->get('test','LoginController@test');
         });
     });
+
+    $api->group(['namespace' => 'App\Api\GoModule\Controllers'], function ($api) {
+        $api->group(['middleware' => 'jwt.api.auth'], function ($api) {
+            $api->post('/userCheckOrder', 'GoController@userCheckOrder');
+            $api->post('/checkDriverLocation', 'GoController@checkDriverLocation');
+        });
+    });
 });

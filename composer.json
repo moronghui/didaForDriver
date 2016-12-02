@@ -11,7 +11,8 @@
         "laravelcollective/html": "^5.3",
 	    "dingo/api":"1.0.x@dev",
         "tymon/jwt-auth": "0.5.*",
-        "php-curl-class/php-curl-class": "@dev"
+        "php-curl-class/php-curl-class": "^7.1",
+        "predis/predis": "^1.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
