@@ -5,6 +5,7 @@ use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+
 class GetUserFromToken
 {
     public function handle($request, Closure $next)
@@ -32,7 +33,7 @@ class GetUserFromToken
                 'data' => '',
             ]);
         }
-        
+
         //$this->events->fire('tymon.jwt.valid', $user);
         return $next($request);
     }

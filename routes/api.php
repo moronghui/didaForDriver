@@ -16,15 +16,26 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function ($api) {
     $api->group(['namespace' => 'App\Api\Controllers'], function ($api) {
-        $api->get('/login', 'LoginController@index');
-        $api->get('/toke', 'AuthController@authenticate');
-        $api->get('/code', 'LoginController@code');
 
-        $api->group(['middleware' => 'jwt.api.auth'], function ($api) {
-             $api->get('logout', 'AuthController@logout');
-             $api->get('test', 'LoginController@test');
+      $api->get('/login', 'LoginController@index');
+      $api->get('/sms', 'LoginController@message');
+      $api->get('/toke', 'AuthController@authenticate');
+      $api->get('/code', 'LoginController@code');
+
+      $api->group(['middleware' => 'apiweb'], function ($api) {
+
+      $api->group(['middleware' => 'jwt.api.auth'], function ($api) {
+          $api->get('/sess', 'LoginController@sessionSet');
+          $api->get('/check', 'LoginController@check');
+          $api->group(['middleware' => 'checkphone'], function ($api) {
+
+             $api->get('logout','AuthController@logout');
+             $api->get('test','LoginController@test');
+           });
+         });
         });
     });
+});
 
     $api->group(['namespace' => 'App\Api\GoModule\Controllers'], function ($api) {
         $api->group(['middleware' => 'jwt.api.auth'], function ($api) {
