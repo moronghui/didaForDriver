@@ -35,7 +35,7 @@ class AuthController extends BaseController
         $openid = new LoginController();
         $openid = $openid->info($code,$_SERVER['REMOTE_ADDR']);
 
-        $user = wechat::where("openid","=",'oAqeFwqjdQzcgzpnmw1Qhy8eN4Jc')->first();
+        $user = wechat::where("openid","=",$openid)->first();
         if (!$user){
           $arr = array ('status'=>"NO USER");
           return response()->json(compact('arr'));

@@ -43,10 +43,14 @@ class LoginController extends BaseController
       $appsecret = "89cdb8aef0b3de54bf7b9d1d42364c47";
       $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=".$appid."&secret=".$appsecret."&code=".$code."&grant_type=authorization_code";
       $curl = new Curl();
+      $curl->setOpt(CURLOPT_SSL_VERIFYPEER, FALSE);
       $curl->get($url);
       $response = $curl->response;
+
       $response = json_decode($response,true);
+
       $access_token = $response['access_token'];
+      
       $openid = $response['openid'];
       $url_info ="https://api.weixin.qq.com/sns/userinfo?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
       $curl->get($url_info);
