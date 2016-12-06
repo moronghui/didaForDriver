@@ -43,9 +43,8 @@ class GoController extends BaseController
 
         $user = json_decode($user_json, true);
         //test phone
-        $user['userphone'] = '15521145890';
+        
 
-        $hashName = 'order:'.$user['userphone'];
         $orderInfo = Redis::HGetAll($hashName);
 
         //if cannot find the oder return not found
@@ -82,12 +81,12 @@ class GoController extends BaseController
      *@todo get the driver from the database's table
      */
     private function getDriverInfo($driverPhone){
-    /*
-        $driver = DB::table('driver')
-            ->where('phone', $driverPhone)
-            ->value('head', 'name', 'star', 'orderNum', 'carnumber')->first();
+  
+        $driver = DB::table('drivers')
+            ->where('driverPhone', $driverPhone)
+            ->value('head', 'name', 'stars', 'orderFinishedNum', 'motoNum')->first();
         $driver['driverLocation'] = Redis::hGetAll('driver:'.$driverPhone);
-     */
+ 
     }
 
 

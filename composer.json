@@ -11,7 +11,7 @@
         "laravelcollective/html": "^5.3",
 	    "dingo/api":"1.0.x@dev",
         "tymon/jwt-auth": "0.5.*",
-        "php-curl-class/php-curl-class": "^7.1",
+        //"php-curl-class/php-curl-class": "^7.1@dev",
         "predis/predis": "^1.1"
     },
     "require-dev": {

@@ -48,20 +48,7 @@ class AuthController extends BaseController
         return response()->json(compact('token'));
     }
 
-    /**
-     * @param Request $request
-     */
-/*    public function register(Request $request)
-    {
-        $newUser = [
-            'email' => $request->get('email'),
-            'name' => $request->get('name'),
-            'password' => bcrypt($request->get('password'))
-        ];
-        $user = Client::create($newUser);
-        $token = JWTAuth::fromUser($user);
-        return $token;
-    }  */
+
 
 
     public function logout(){
@@ -70,8 +57,5 @@ class AuthController extends BaseController
         $arr = array ('LOG OUT'=>"SUCCESSED");
         return response()->json(compact('arr'));
     }
-    /****
-     * 获取用户的信息
-     * @return \Illuminate\Http\JsonResponse
-     */
+
 }

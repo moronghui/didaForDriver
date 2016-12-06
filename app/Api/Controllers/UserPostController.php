@@ -95,7 +95,7 @@ class UserPostController extends BaseController
 
         $query = Redis::hmset(
             'usecar:'.$userphone,
-            ['from',
+            'from',
             $from,
             'fromPosition',
             $fromPosition,
@@ -109,7 +109,7 @@ class UserPostController extends BaseController
             $motoType,
             'isAccept',
             $isAccept
-            ]
+
         );
         $status1 = ['status'=>'OK'];
         $status2 = ['status'=>'Failed'];
