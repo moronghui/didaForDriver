@@ -4,7 +4,11 @@ namespace App\Api\Controllers;
 use App\Wechat;
 use Illuminate\Http\Request;
 use JWTAuth;
+<<<<<<< HEAD
 use App\Api\ControllersLoginController;
+=======
+use App\Api\Controllers\LoginController;
+>>>>>>> upstream/test-pr
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
@@ -24,23 +28,18 @@ class AuthController extends BaseController
     }
 
     /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     *@author Arius
+     *@function set a token for user
+     *
+     *@return token json
      */
     public function authenticate(Request $request)
     {
         $code = $request->get('code');
         $openid = new LoginController();
-        $openid = $openid->info($code);
-        $user = wechat::where("openid","=",$openid)->first();
-        // if ($user == null) {
-        //   return "没有";
-        // }
-        // else {
-        //   return $user;
-        // }
-        // $user = wechat::find(1);
-        // $user = $user[0];
+        $openid = $openid->info($code,$_SERVER['REMOTE_ADDR']);
+
+        $user = wechat::where("openid","=",'oAqeFwqjdQzcgzpnmw1Qhy8eN4Jc')->first();
         if (!$user){
           $arr = array ('status'=>"NO USER");
           return response()->json(compact('arr'));
@@ -68,6 +67,7 @@ class AuthController extends BaseController
         return $token;
     }  */
 
+
     public function logout(){
       // $token = $request->get('token');
         JWTAuth::refresh();
@@ -78,5 +78,4 @@ class AuthController extends BaseController
      * 获取用户的信息
      * @return \Illuminate\Http\JsonResponse
      */
-
 }

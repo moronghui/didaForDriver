@@ -23,7 +23,12 @@
     },
     "autoload": {
         "classmap": [
-            "database"
+            "database",
+            "app/Top/top/TopClient.php",
+            "app/Top/top/AlibabaAliqinFcSmsNumSendRequest.php",
+            "app/Top/top/RequestCheckUtil.php",
+            "app/Top/top/ResultSet.php",
+            "app/Top/top/TopLogger.php"
         ],
         "psr-4": {
             "App\\": "app/"

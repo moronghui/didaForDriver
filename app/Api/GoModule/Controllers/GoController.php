@@ -107,7 +107,6 @@ class GoController extends BaseController
             ->value('head', 'name', 'star', 'orderNum', 'carnumber')->first();
         $driver['driverLocation'] = Redis::hGetAll('driver:'.$driverPhone);
      */
-
     }
 
 
