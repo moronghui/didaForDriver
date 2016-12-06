@@ -54,5 +54,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'apiweb' =>   \Illuminate\Session\Middleware\StartSession::class,
         'jwt.api.auth' => \App\Http\Middleware\GetUserFromToken::class,
+        'checkphone' => \App\Http\Middleware\PhoneFromToken::class,
     ];
 }

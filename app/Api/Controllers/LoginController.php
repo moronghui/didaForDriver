@@ -50,7 +50,7 @@ class LoginController extends BaseController
       $response = json_decode($response,true);
 
       $access_token = $response['access_token'];
-      
+
       $openid = $response['openid'];
       $url_info ="https://api.weixin.qq.com/sns/userinfo?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
       $curl->get($url_info);
