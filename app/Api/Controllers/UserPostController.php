@@ -69,7 +69,7 @@ class UserPostController extends BaseController
 
     public function orderSave(PostRequest $request)
     {
-       
+
         //获得用户手机号码
         $userphone = $request->get('userphone');
         //存入userphone集合
@@ -90,12 +90,12 @@ class UserPostController extends BaseController
         $passengerNum = $request->get('passengerNum');
         //获得车类型
         $motoType = $request->get('motoType');
-        
+
         $isAccept = 0;
 
         $query = Redis::hmset(
             'usecar:'.$userphone,
-            ['from',
+            'from',
             $from,
             'fromPosition',
             $fromPosition,
@@ -109,7 +109,7 @@ class UserPostController extends BaseController
             $motoType,
             'isAccept',
             $isAccept
-            ]
+
         );
         $status1 = ['status'=>'OK'];
         $status2 = ['status'=>'Failed'];

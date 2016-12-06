@@ -1,6 +1,5 @@
 <?php
 
-namespace App\Api\Controllers;
 
 use Illuminate\Support\Facades\Session;
 use Curl\Curl;
@@ -88,7 +87,7 @@ class LoginController extends BaseController
     {
       $time = strtotime(date('Y-m-d H:i:s',time()));//integer
       $time = $time%10000;
-      $value = array ('lastip'=>$_SERVER['REMOTE_ADDR'],'tel'=>$request['tel']);
+      $value = array ('lastip'=>$_SERVER['REMOTE_ADDR'],'tel'=>$request->input('tel'));
       $num = 'k'.strval($time);
       Session::put($num, $value);
       // Session::flush();
@@ -130,7 +129,7 @@ class LoginController extends BaseController
      */
     public function check(Request $request)
     {
-      $num = $request['num'];
+      $num = $request->input('num');
       $num = 'k'.strval($num);
       $usr = JWTAuth::toUser();
       $ip = $usr['lastip'];
