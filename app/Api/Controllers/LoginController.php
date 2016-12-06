@@ -38,8 +38,8 @@ class LoginController extends BaseController
      *@return  user openid
      */
     public function info($code,$ip){
-      $appid = "wx1aabdf768c60315f";
-      $appsecret = "89cdb8aef0b3de54bf7b9d1d42364c47";
+      $appid = "wx3dc8172320f8e0e4";
+      $appsecret = "41c1f037f44f8e2a4dc7151b8412be36";
       $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=".$appid."&secret=".$appsecret."&code=".$code."&grant_type=authorization_code";
       $curl = new Curl();
       $curl->get($url);

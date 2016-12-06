@@ -72,26 +72,7 @@ class GoController extends BaseController
      */
     public function checkDriverLocation(Request $request)
     {
-        $rules = [
-              'driverPhone' => ['required','max:11'],
-          ];
-                $payload = app('request')->only('driverPhone');
-
-                $validator = app('validator')->make($payload, $rules);
-
-                if ($validator->fails()) {
-                    throw new \Dingo\Api\Exception\StoreResourceFailedException('driver Phone is required', $validator->errors());
-                }
-
-        $driverPhone = $request->input('driverPhone');
-        $hashName = "driver:".$driverPhone;
-        $location = Redis::hgetall($hashName);
-        if (empty($location)) {
-            $result = $this->result('204', 'NOT_FOUND_DRIVER');
-            return response()->json($result);
-        };
-        $result = $this->result('200', 'ok', $location['location']);
-        return response()->json($result);
+        return 'ok';
     }
 
 
