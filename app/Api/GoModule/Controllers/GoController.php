@@ -10,7 +10,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Illuminate\Support\Facades\Redis;
-
+use Illuminate\Support\Facades\DB;
 class GoController extends BaseController
 {
     /**
@@ -43,7 +43,7 @@ class GoController extends BaseController
 
         $user = json_decode($user_json, true);
         //test phone
-        
+        $hashName ="usecar:".$user['tel'];
 
         $orderInfo = Redis::HGetAll($hashName);
 
@@ -52,13 +52,16 @@ class GoController extends BaseController
             $result = $this->result('204', 'ORDER_NOT_FOUND');
             return response()->json($result);
         } else if ($orderInfo['isAccept']==1) {
-            $result = $this->result('200', 'OK', $orderInfo);
+            $driverPhone = $orderInfo['driverPhone'];
+            //get Driver infomation
+            $driverInfo = $this->getDriverInfo($driverPhone);
+            $result = $this->result('200', 'OK', ['orderInfo'=>$orderInfo,'driverInfo'=>$driverInfo]);
+            return response()->json($result);
+        }if($orderInfo['isAccept'] == 4){
+            $result = $this->result('202', 'finished', ['orderInfo'=>$orderInfo,'driverInfo'=>$driverInfo]);
             return response()->json($result);
         } else {
             $result = $this->result('204', 'NOT_ACCEPTED');
-            $driverPhone = $user['driverPhone'];
-            $driver = $this->getDriverInfo($driverPhone);
-            $result = array_merge($result,$driver);
             return response()->json($result);
         }
     }
@@ -81,12 +84,12 @@ class GoController extends BaseController
      *@todo get the driver from the database's table
      */
     private function getDriverInfo($driverPhone){
-  
+
         $driver = DB::table('drivers')
             ->where('driverPhone', $driverPhone)
-            ->value('head', 'name', 'stars', 'orderFinishedNum', 'motoNum')->first();
-        $driver['driverLocation'] = Redis::hGetAll('driver:'.$driverPhone);
- 
+            ->select('head', 'name', 'stars', 'orderFinishedNum', 'motoNum')->first();
+        $driver->driverPosition = Redis::hGetAll('driver:'.$driverPhone)['location'];
+        return $driver;
     }
 
 

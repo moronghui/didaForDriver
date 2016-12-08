@@ -2,6 +2,7 @@
 
 namespace App\Api\GoModule\Controllers;
 
+use App\Api\Controllers\BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Requests;
@@ -10,6 +11,9 @@ use App\Http\Requests\PostRequest;
 class UserPostController extends BaseController
 {
 
+    public function __construct(){
+        parent::__construct();
+    }
     /**
     *文件名(UserPostController.php)
     *
@@ -29,7 +33,7 @@ class UserPostController extends BaseController
         $num = 0;//车辆统计个数num
         foreach ($drivers as $driver) {
             //
-            $d_position = Redis::hget('driverphone'.$driver, 'position');
+            $d_position = Redis::hget('driver:'.$driver, 'position');
             $d_data = explode(",", $d_position);
             $betweenX = $p_data['0']-$d_data['0'];
             $betweenY = $p_data['1']-$d_data['1'];
@@ -39,7 +43,8 @@ class UserPostController extends BaseController
                 $num = $num+1;
             }
         }
-        return $num;
+        $result = $this->returnMsg('200','success',['carNum'=>$num]);
+        return response()->json($result);;
     }
 
     /**
@@ -52,10 +57,12 @@ class UserPostController extends BaseController
     {
         $distance = $request->get('distance');
         if ($distance<=5) {
-                return 5;
+            $result = $this->returnMsg('200','success',['price'=>5]);
+            return response()->json($result);
         } else {
             $p = 5+0.5*($distance-5);
-            return $p;
+            $result = $this->returnMsg('200','success',['price'=>$p]);
+            return response()->json($result);
         }
     }
 
@@ -69,7 +76,7 @@ class UserPostController extends BaseController
 
     public function orderSave(PostRequest $request)
     {
-       
+
         //获得用户手机号码
         $userphone = $request->get('userphone');
         //存入userphone集合
@@ -90,12 +97,12 @@ class UserPostController extends BaseController
         $passengerNum = $request->get('passengerNum');
         //获得车类型
         $motoType = $request->get('motoType');
-        
+
         $isAccept = 0;
 
         $query = Redis::hmset(
             'usecar:'.$userphone,
-            ['from',
+            'from',
             $from,
             'fromPosition',
             $fromPosition,
@@ -109,14 +116,14 @@ class UserPostController extends BaseController
             $motoType,
             'isAccept',
             $isAccept
-            ]
+
         );
-        $status1 = ['status'=>'OK'];
-        $status2 = ['status'=>'Failed'];
         if ($query) {
-            return response()->json(compact('status1'));
+            $result = $this->returnMsg('200','ok');
+            return response()->json($result);
         } else {
-            return response()->json(compact('status2'));
+            $result = $this->returnMsg('500','save order fail');
+            return response()->json($result);
         }
     }
 }

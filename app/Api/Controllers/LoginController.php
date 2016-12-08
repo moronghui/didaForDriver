@@ -1,10 +1,8 @@
 <?php
 
-<<<<<<< HEAD
 namespace App\Api\Controllers;
-=======
 
->>>>>>> upstream/master
+use App\Api\Controllers\BaseController;
 use Illuminate\Support\Facades\Session;
 use Curl\Curl;
 use Illuminate\Http\Request;
@@ -22,6 +20,9 @@ use AlibabaAliqinFcSmsNumSendRequest;
 class LoginController extends BaseController
 {
 
+    public function __construct(){
+        parent::__construct();
+    }
   /**
    *@author Arius
    *@function to get wechat code
@@ -42,13 +43,8 @@ class LoginController extends BaseController
      *@return  user openid
      */
     public function info($code,$ip){
-<<<<<<< HEAD
       $appid = "wx3dc8172320f8e0e4";
       $appsecret = "41c1f037f44f8e2a4dc7151b8412be36";
-=======
-      $appid = "wx1aabdf768c60315f";
-      $appsecret = "89cdb8aef0b3de54bf7b9d1d42364c47";
->>>>>>> upstream/master
       $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=".$appid."&secret=".$appsecret."&code=".$code."&grant_type=authorization_code";
       $curl = new Curl();
       $curl->setOpt(CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -96,11 +92,7 @@ class LoginController extends BaseController
     {
       $time = strtotime(date('Y-m-d H:i:s',time()));//integer
       $time = $time%10000;
-<<<<<<< HEAD
-      $value = array ('lastip'=>$_SERVER['REMOTE_ADDR'],'tel'=>$request['tel']);
-=======
       $value = array ('lastip'=>$_SERVER['REMOTE_ADDR'],'tel'=>$request->input('tel'));
->>>>>>> upstream/master
       $num = 'k'.strval($time);
       Session::put($num, $value);
       // Session::flush();
@@ -128,10 +120,17 @@ class LoginController extends BaseController
     	$req->setSmsParam("{'code':'".$num."'}"); //这个是短信签名
     	$req->setRecNum($tel); //这个是写手机号码
     	$req->setSmsTemplateCode("SMS_32485128"); //这个是模版ID 主要也是短信内容
-    	$resp = $c->execute($req);
-      $resp = json_encode($resp);
-      $resp = json_decode($resp);
-    	return response()->json(compact('resp'));
+        $resp = $c->execute($req);
+        $resp = json_encode($resp);
+        $resp = json_decode($resp);
+        if(isset($resp->result)){
+            if($resp->result->err_code == 0){
+                $result = $this->returnMsg('200','OK');
+    	        return response()->json($result);
+            }
+        }
+            $result = $this->returnMsg('500',$resp);
+    	    return response()->json($result);
     }
     /**
      *@author Arius
@@ -165,22 +164,11 @@ class LoginController extends BaseController
           $token = JWTAuth::fromUser($usr);
           return response()->json(compact('token'));
         }
-        $arr = array ('ERROR'=>"ERROR CODE");
-        return response()->json(compact('arr'));
+        $result = $this->returnMsg('500','ERROR CODE');
+        return response()->json($result);
       }
-      $arr = array ('ERROR'=>"ERROR CODE");
-      return response()->json(compact('arr'));
-    }
-    /**
-     *@author Arius
-     *@function wechat code test
-     *
-     *
-     *
-     */
-    public function code($request){
-      $arr = array ('code'=>$_GET['code']);
-      return response()->json(compact('arr'));
+        $result = $this->returnMsg('500','ERROR CODE');
+        return response()->json($result);
     }
     /**
      *@author Arius

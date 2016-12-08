@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Api\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -7,9 +7,15 @@ use App\Drivers;
 use JWTAuth;
 use App\OrderRecord;
 use App\Http\Requests;
-
+use App\Api\Controllers\BaseController;
+use Illuminate\Support\Facades\DB;
 class OrderController extends BaseController
 {
+
+    public function __construct(){
+        parent::__construct();
+    }
+
   /**
    *@author Arius
    *@function get all record for a user by token
@@ -19,13 +25,18 @@ class OrderController extends BaseController
    */
     public function addRecord(Request $request)
     {
-      $detail = Redis::hgetall('usecar:'.$request->get('tel'));
+      $user = JWTAuth::touser();
+      $detail = Redis::hgetall('usecar:'.$user['tel']);
+      //To get the drive's position AND driverPhone from redis;
+      $driverPhone = $detail['driverPhone'];
+      $driverPosition = Redis::hget('driver:'.$detail['driverPhone'], 'driverPosition');
+
       if ($detail) {
-        $input['userphone']=$request->get('tel');
-        $input['driverPhone']='123';
+        $input['userphone']=$user['tel'];
+        $input['driverPhone']=$driverPhone;
         $input['orderNum']=time().rand(10,100);
         $input['from']=$detail['from'];
-        $input['price']='10';
+        $input['price']=$detail['price'];
         $input['discount']=0;
         $input['time']=date('y-m-d h:i:s',time());
         $input['passengerNum']=$detail['passengerNum'];
@@ -33,17 +44,17 @@ class OrderController extends BaseController
         $result=OrderRecord::create($input);
       }
       else {
-        $arr = array ('status'=>"ERROR REQUEST");
-        return response()->json(compact('arr'));
+        $result = $this->returnMsg('500','ERROR REQUEST');
+        return response()->json($result);
       }
       if ($result) {
-        $arr = array ('status'=>"SAVED","orderNum"=>$input['orderNum']);
+        $result = $this->returnMsg('200','SAVED',['orderNum'=>$input['orderNum']]);
         Redis::del('usecar:'.$request->get('tel'));
-        return response()->json(compact('arr'));
+        return response()->json($result);
       }
       else {
-        $arr = array ('status'=>"ERROR ARRAY");
-        return response()->json(compact('arr'));
+        $result = $this->returnMsg('500','ERROR ARRAY');
+        return response()->json(compact($result));
       }
     }
     /**
@@ -55,16 +66,17 @@ class OrderController extends BaseController
      */
       public function orderBack(Request $request)
       {
-        $name = Redis::EXISTS('usecar:'.$request->post('tel'));
-        if ($name) {
-          $name = Redis::hset('usecar:'.'123','isAccept',0);
-          $name = Redis::hset('usecar:'.'123','driverphone',null);
-          $arr = array ('status'=>"SUCCESSED");
-          return response()->json(compact('arr'));
+        $user = JWTAuth::touser();
+        $existname = Redis::EXISTS('usecar:'.$user['tel']);
+        if ($existname) {
+          $name = Redis::hset('usecar:'.$user['tel'],'isAccept',0);
+          $name = Redis::hset('usecar:'.$user['tel'],'driverPhone',null);
+          $result = $this->returnMsg('200','ok');
+          return response()->json($result);
         }
         else {
-          $arr = array ('status'=>"ERROR NUMBER");
-          return response()->json(compact('arr'));
+          $result = $this->returnMsg('500','order Not Found');
+          return response()->json($result);
         }
       }
   /**
@@ -75,30 +87,39 @@ class OrderController extends BaseController
    */
     public function orderStar(Request $request)
     {
+
+      $ownertel = JWTAuth::toUser();
+
       $old = OrderRecord::where('orderNum','=',$request->input('num'));
       $last = OrderRecord::where('orderNum','=',$request->input('num'))->first();
-      $ownertel = JWTAuth::toUser();
-      $ownertel = $ownertel['tel'];
       if ($last) {
-        if ($ownertel!=$last['userphone']) {
-          $arr = array ('status'=>"NO PERMISSON");
-          return response()->json(compact('arr'));
+        if ($ownertel['tel']!=$last['userphone']) {
+          $result = $this->returnMsg('500','NO PERMISSION');
+          return response()->json($result);
         }
         $last = json_decode($last,true);
         $last['comment']=$request->input('star');
         $result=$old->update($last);
+
+        $driverStar = DB::table('drivers')
+            ->where('driverPhone',$last['driverPhone'])
+            ->value('stars');
+        //update the driver 's stars
+        DB::table('drivers')
+            ->where('driverPhone',$last['driverPhone'])
+            ->update(['stars' => ($driverStar+$last['comment'])/2]);
         if ($result) {
-          $arr = array ('status'=>"SUCCESSED");
-          return response()->json(compact('arr'));
+          $result = $this->returnMsg('200','ok');
+          return response()->json($result);
         }
         else {
-          $arr = array ('status'=>"FAILED UPDATE");
-          return response()->json(compact('arr'));
+          $result = $this->returnMsg('500','fail update');
+          return response()->json($result);
         }
       }
       else {
-        $arr = array ('status'=>"ERROR ORDERNUM");
-        return response()->json(compact('arr'));
+          $result = $this->returnMsg('500','error orderNum');
+          return response()->json($result);
       }
     }
   /**
@@ -115,8 +136,8 @@ class OrderController extends BaseController
       if ($list) {
         return $list;
       }
-      $arr = array ('status'=>"ERROR NUMBER");
-      return response()->json(compact('arr'));
+      $result = $this->returnMsg('500','error number');
+      return response()->json($result);
     }
     /**
      *@author Arius
@@ -127,17 +148,20 @@ class OrderController extends BaseController
      */
     public function orderRecordOne(Request $request)
     {
-      $one=OrderRecord::where("orderNum","=",$request->get('id'))->first();
+      $one=OrderRecord::where("orderNum","=",$request->get('num'))->first();
       $ownertel = JWTAuth::toUser();
       $ownertel = $ownertel['tel'];
       if ($one) {
         if ($ownertel!=$one['userphone']) {
-          $arr = array ('status'=>"NO PERMISSON");
-          return response()->json(compact('arr'));
+          $result = $this->returnMsg('500','NO permission');
+          return response()->json($result);
         }
+      }else{
+        $result = $this->returnMsg('500','error id');
+        return response()->json($result);
       }
-      $arr = array ('status'=>"ERROR ID");
-      return response()->json(compact('arr'));
+      $result = $this->returnMsg('200','ok',$one);
+      return response()->json($result);
     }
 
 }
