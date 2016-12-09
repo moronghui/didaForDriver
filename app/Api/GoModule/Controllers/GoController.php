@@ -88,7 +88,7 @@ class GoController extends BaseController
         $driver = DB::table('drivers')
             ->where('driverPhone', $driverPhone)
             ->select('head', 'name', 'stars', 'orderFinishedNum', 'motoNum')->first();
-        $driver->driverPosition = Redis::hGetAll('driver:'.$driverPhone)['location'];
+        $driver->driverPosition = Redis::hGetAll('driver:'.$driverPhone)['driverPosition'];
         return $driver;
     }
 

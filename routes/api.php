@@ -43,6 +43,7 @@ $api->version('v1', function ($api) {
 
 
     $api->group(['namespace' => 'App\Api\GoModule\Controllers'], function ($api) {
+      $api->group(['middleware' => 'apiweb'], function ($api) {
         $api->group(['middleware' => 'jwt.api.auth'], function ($api) {
            $api->group(['middleware' => 'checkphone'], function ($api) {
             $api->post('/userCheckOrder', 'GoController@userCheckOrder');
@@ -51,8 +52,10 @@ $api->version('v1', function ($api) {
             $api->post('/user/carNum', 'UserPostController@carNum');
             $api->post('/user/price', 'UserPostController@price');
             $api->post('/user/changeInfo', 'UserChangeInfoController@changeInfo');
+            $api->post('/user/sendCode', 'UserChangeInfoController@sessionSet');
            });
         });
+       });
     });
     $api->group(['namespace' => 'App\Api\Controllers'], function ($api) {
         $api->group(['middleware' => 'jwt.api.auth'], function ($api) {
