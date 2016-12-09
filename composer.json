@@ -29,7 +29,6 @@
             "app/Top/top/RequestCheckUtil.php",
             "app/Top/top/ResultSet.php",
             "app/Top/top/TopLogger.php"
-        
         ],
         "psr-4": {
             "App\\": "app/"

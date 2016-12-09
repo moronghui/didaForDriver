@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function ($api) {
     $api->group(['namespace' => 'App\Api\Controllers'], function ($api) {
-
+      $api->get('test','LoginController@test');
       $api->get('/login', 'LoginController@index');
       $api->get('/sms', 'LoginController@message');
       $api->get('/toke', 'AuthController@authenticate');
@@ -32,7 +32,7 @@ $api->version('v1', function ($api) {
              $api->get('/addrecord', 'OrderController@addRecord');
              $api->post('/setstar', 'OrderController@orderStar');
              $api->post('/back', 'OrderController@orderBack');
-             $api->get('/recordlist','OrderController@orderRecordList');
+             $api->get('/recordlist', 'OrderController@orderRecordList');
              $api->get('/recordone','OrderController@orderRecordOne');
              $api->get('/logout','AuthController@logout');
              $api->get('/test','LoginController@test');
@@ -43,13 +43,19 @@ $api->version('v1', function ($api) {
 
 
     $api->group(['namespace' => 'App\Api\GoModule\Controllers'], function ($api) {
+      $api->group(['middleware' => 'apiweb'], function ($api) {
         $api->group(['middleware' => 'jwt.api.auth'], function ($api) {
+           $api->group(['middleware' => 'checkphone'], function ($api) {
             $api->post('/userCheckOrder', 'GoController@userCheckOrder');
             $api->post('/checkDriverLocation', 'GoController@checkDriverLocation');
             $api->post('/user/orderSave', 'UserPostController@orderSave');
             $api->post('/user/carNum', 'UserPostController@carNum');
             $api->post('/user/price', 'UserPostController@price');
+            $api->post('/user/changeInfo', 'UserChangeInfoController@changeInfo');
+            $api->post('/user/sendCode', 'UserChangeInfoController@sessionSet');
+           });
         });
+       });
     });
     $api->group(['namespace' => 'App\Api\Controllers'], function ($api) {
         $api->group(['middleware' => 'jwt.api.auth'], function ($api) {

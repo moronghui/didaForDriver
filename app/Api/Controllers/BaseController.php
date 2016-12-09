@@ -17,9 +17,11 @@ class BaseController extends Controller
     {
 
     }
-    protected function formatValidationErrors(Validator $validator)
-    {
-        $message = $validator->errors()->first();
-        return ['message'=>$message, 'status_code' => 500];
+
+    public function returnMsg($code='200', $message='ok', $data=''){
+        $arr['code'] = $code;
+        $arr['message'] = $message;
+        $arr['data'] = $data;
+        return $arr;
     }
 }

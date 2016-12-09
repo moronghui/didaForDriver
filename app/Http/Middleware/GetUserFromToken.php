@@ -33,8 +33,6 @@ class GetUserFromToken
                 'data' => '',
             ]);
         }
-
-        //$this->events->fire('tymon.jwt.valid', $user);
         return $next($request);
     }
 }

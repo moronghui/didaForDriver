@@ -31,10 +31,11 @@ class AuthController extends BaseController
      */
     public function authenticate(Request $request)
     {
-        // $code = $request->get('code');
-        // $openid = new LoginController();
-        // $openid = $openid->info($code,$_SERVER['REMOTE_ADDR']);
-        $user = wechat::where("openid","=",'oAqeFwqjdQzcgzpnmw1Qhy8eN4Jc')->first();
+        $code = $request->get('code');
+        $openid = new LoginController();
+        $openid = $openid->info($code,$_SERVER['REMOTE_ADDR']);
+
+        $user = wechat::where("openid","=",$openid)->first();
         if (!$user){
           $arr = array ('status'=>"NO USER");
           return response()->json(compact('arr'));
@@ -49,12 +50,12 @@ class AuthController extends BaseController
 
 
 
+
     public function logout(){
       // $token = $request->get('token');
         JWTAuth::refresh();
         $arr = array ('LOG OUT'=>"SUCCESSED");
         return response()->json(compact('arr'));
     }
-
 
 }
