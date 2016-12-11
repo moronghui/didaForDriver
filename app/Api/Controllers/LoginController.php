@@ -88,8 +88,7 @@ class LoginController extends BaseController
      *@param tel
      *@return sms sending status
      */
-    public function sessionSet(Request $request)
-    {
+    public function sessionSet(Request $request){
       $time = strtotime(date('Y-m-d H:i:s',time()));//integer
       $time = $time%10000;
       $value = array ('lastip'=>$_SERVER['REMOTE_ADDR'],'tel'=>$request->input('tel'));
@@ -139,8 +138,7 @@ class LoginController extends BaseController
      *
      *
      */
-    public function check(Request $request)
-    {
+    public function check(Request $request){
       $num = $request->input('num');
       $num = 'k'.strval($num);
       $usr = JWTAuth::toUser();
