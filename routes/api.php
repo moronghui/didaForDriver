@@ -15,18 +15,17 @@ use Illuminate\Http\Request;
 
 $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function ($api) {
-//driver
-$api->group(['middleware' =>'web','prefix'=>'Driver'], function ($api) {
-  $api->post('login', 'RegisterController@login');
-  $api->post('stordr', 'RegisterController@storeDriver');
+  //driver
+  $api->group(['middleware' =>'web','prefix'=>'driver','namespace' => 'App\Api\Driver'], function ($api) {
+    $api->post('login', 'RegisterController@login');
+    $api->post('stordr', 'RegisterController@storeDriver');
     $api->group(['middleware' => 'jwt.api.auth'], function ($api) {
         $api->post('storde', 'RegisterController@storeDetail');
-        $api->get('start', 'driver\CommonController@start');
-        $api->get('end', 'driver\CommonController@end');
-        $api->get('pushOrder', 'driver\CommonController@pushOrder');
-        $api->get('getOrder', 'driver\CommonController@getOrder');
-        $api->get('finishOrder', 'driver\CommonController@finishOrder');
+        $api->get('start', 'CommonController@start');
+        $api->get('end', 'CommonController@end');
+        $api->get('pushOrder', 'CommonController@pushOrder');
+        $api->get('getOrder', 'CommonController@getOrder');
+        $api->get('finishOrder', 'CommonController@finishOrder');
     });
   });
-});
 });

@@ -15,6 +15,8 @@ use App\Api\Controllers\LoginController;
 
 class RegisterController extends BaseController
 {
+  //功能：登录、注册、信息设置
+
   /**
    *@author Arius
    *@function login in
